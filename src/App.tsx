@@ -4,6 +4,10 @@ import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
 import CourseDetail from './pages/CourseDetail';
+import Calendar from './pages/Calendar';
+import Messages from './pages/Messages';
+import Settings from './pages/Settings';
+import Admin from './pages/Admin';
 
 function App() {
   return (
@@ -13,10 +17,10 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="courses" element={<Courses />} />
           <Route path="courses/:courseId" element={<CourseDetail />} />
-          <Route path="community" element={<div className="text-white">Community Content Coming Soon</div>} />
-          <Route path="calendar" element={<div className="text-white">Calendar Content Coming Soon</div>} />
-          <Route path="messages" element={<div className="text-white">Messages Content Coming Soon</div>} />
-          <Route path="settings" element={<div className="text-white">Settings Content Coming Soon</div>} />
+          <Route path="calendar" element={<Calendar />} />
+          <Route path="messages" element={<Messages />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="admin" element={<Admin />} />
         </Route>
       </Routes>
     </Router>
