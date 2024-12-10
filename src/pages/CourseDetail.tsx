@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import CourseHeader from '../components/course/CourseHeader';
-import CourseSyllabus from '../components/course/CourseSyllabus';
+import CourseContent from '../components/course/CourseContent';
 import type { Course } from '../types';
 
-const mockCourseDetail: Course = {
+// Mock course data with video content
+const mockCourseDetail: Course & {
+  sections: Array<{
+    id: string;
+    title: string;
+    content: Array<{
+      id: string;
+      title: string;
+      type: 'video' | 'document';
+      duration: string;
+      isPremium: boolean;
+      url: string;
+      thumbnail?: string;
+    }>;
+  }>;
+} = {
   id: '1',
   title: 'Introduction to Web Development',
   description: 'Learn the fundamentals of web development with HTML, CSS, and JavaScript. This comprehensive course will take you from a beginner to being able to create full-featured responsive websites.',
@@ -17,74 +32,52 @@ const mockCourseDetail: Course = {
   level: 'Beginner',
   rating: 4.8,
   totalRatings: 245,
-  syllabus: [
+  sections: [
     {
-      id: '01',
+      id: '1',
       title: 'Getting Started with HTML',
-      duration: '2 hours',
-      lessons: [
+      content: [
         {
           id: '1.1',
           title: 'Introduction to HTML',
-          duration: '15 min',
           type: 'video',
-          completed: true
+          duration: '15:30',
+          isPremium: false,
+          url: 'https://www.youtube.com/watch?v=UB1O30fR-EE',
+          thumbnail: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6'
         },
         {
           id: '1.2',
-          title: 'HTML Document Structure',
-          duration: '20 min',
+          title: 'Advanced HTML Concepts',
           type: 'video',
-          completed: true
-        },
-        {
-          id: '1.3',
-          title: 'Working with Text Elements',
-          duration: '25 min',
-          type: 'reading',
-          completed: true
-        },
-        {
-          id: '1.4',
-          title: 'HTML Basics Quiz',
-          duration: '15 min',
-          type: 'quiz',
-          completed: true
+          duration: '20:45',
+          isPremium: true,
+          url: 'https://www.youtube.com/watch?v=DPnqb74Smug',
+          thumbnail: 'https://images.unsplash.com/photo-1516259762381-22954d7d3ad2'
         }
       ]
     },
     {
-      id: '02',
+      id: '2',
       title: 'CSS Fundamentals',
-      duration: '2.5 hours',
-      lessons: [
+      content: [
         {
           id: '2.1',
           title: 'Introduction to CSS',
-          duration: '20 min',
           type: 'video',
-          completed: true
+          duration: '18:20',
+          isPremium: false,
+          url: 'https://www.youtube.com/watch?v=1PnVor36_40',
+          thumbnail: 'https://images.unsplash.com/photo-1523437113738-bbd3cc89fb19'
         },
         {
           id: '2.2',
-          title: 'Selectors and Properties',
-          duration: '30 min',
+          title: 'CSS Layout Mastery',
           type: 'video',
-          completed: false
-        },
-        {
-          id: '2.3',
-          title: 'Box Model Deep Dive',
-          duration: '25 min',
-          type: 'reading',
-          completed: false
-        },
-        {
-          id: '2.4',
-          title: 'Styling Practice',
-          duration: '45 min',
-          type: 'assignment',
-          completed: false
+          duration: '25:15',
+          isPremium: true,
+          url: 'https://www.youtube.com/watch?v=9zBsdzdE4sM',
+          thumbnail: 'https://images.unsplash.com/photo-1507721999472-8ed4421c4af2'
         }
       ]
     }
@@ -93,42 +86,20 @@ const mockCourseDetail: Course = {
 
 const CourseDetail = () => {
   const { courseId } = useParams();
-  // In a real app, we would fetch the course data based on courseId
-  const course = mockCourseDetail;
+  const [activeContent, setActiveContent] = useState(mockCourseDetail.sections[0].content[0]);
+  const [isUserPremium] = useState(false); // In a real app, this would come from user context/state
 
   return (
     <div className="space-y-8">
-      <CourseHeader course={course} />
+      <CourseHeader course={mockCourseDetail} />
       
-      <div className="max-w-5xl mx-auto px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <h2 className="text-xl font-semibold text-white mb-6">Course Content</h2>
-            <CourseSyllabus syllabus={course.syllabus || []} />
-          </div>
-          
-          <div className="space-y-6">
-            <div className="bg-gray-800 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">About the Instructor</h3>
-              <div className="flex items-center gap-4 mb-4">
-                <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt={course.instructor}
-                  className="w-16 h-16 rounded-full"
-                />
-                <div>
-                  <h4 className="text-white font-medium">{course.instructor}</h4>
-                  <p className="text-gray-400 text-sm">Senior Web Developer</p>
-                </div>
-              </div>
-              <p className="text-gray-400 text-sm">
-                Sarah is a passionate web developer with over 8 years of experience in building
-                modern web applications. She loves teaching and has helped thousands of students
-                start their journey in web development.
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="max-w-7xl mx-auto px-8">
+        <CourseContent
+          sections={mockCourseDetail.sections}
+          activeContent={activeContent}
+          onContentSelect={setActiveContent}
+          isUserPremium={isUserPremium}
+        />
       </div>
     </div>
   );
